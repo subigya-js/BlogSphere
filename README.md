@@ -14,6 +14,9 @@ BlogSphere is a full-stack blog application built with Next.js
 1. Clone the repository:
    ```
    git clone https://github.com/subigya-js/BlogSphere.git
+   ```
+
+   ```
    cd BlogSphere
    ```
 
