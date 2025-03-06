@@ -7,9 +7,8 @@ export default function Home() {
   const { mode } = useTheme();
 
   return (
-    <div className={`min-h-screen ${mode === 'light' ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}>
-      <Navbar />
-      <main className="p-8 flex flex-col items-center justify-center h-[90vh]">
+    <div className={`h-[90vh] ${mode === 'light' ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}>
+      <main className="p-8 flex flex-col items-center justify-center h-full">
         <h1 className="text-3xl font-bold mb-4">Welcome to BlogSphere</h1>
 
         <form className={`flex flex-col gap-4 p-4 rounded-md lg:w-[30%] md:w-[40%] w-full ${mode === 'light' ? 'bg-gray-100 border border-gray-300' : 'bg-gray-800 border border-gray-700'}`}>
