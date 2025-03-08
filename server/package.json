@@ -1,0 +1,16 @@
+{
+  "name": "blogsphere",
+  "version": "1.0.0",
+  "description": "BlogSphere backend",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^8.12.1"
+  }
+}
