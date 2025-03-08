@@ -33,5 +33,15 @@ To start the development server, run:
 npm run dev
 ```
 
+To start the backend server, run:
+
+```
+cd server
+```
+
+```
+npm run dev
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
