@@ -1,6 +1,6 @@
 # BlogSphere
 
-BlogSphere is a full-stack blog application built with Next.js
+BlogSphere is a full-stack blog application built with NextJS and ExpressJS
 
 ## Getting Started
 
@@ -37,6 +37,10 @@ To start the backend server, run:
 
 ```
 cd server
+```
+
+```
+npm install
 ```
 
 ```
