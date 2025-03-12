@@ -39,7 +39,6 @@ export default function Home() {
             const data = await response.json();
 
             if (response.status === 201) {
-                alert('Registration successful');
                 setRegisterData({ name: '', email: '', password: '' });
                 // You might want to redirect to login page here
                 window.location.href = '/login';
@@ -47,7 +46,6 @@ export default function Home() {
                 setError(data.message || 'Registration failed. Please try again.');
             }
         } catch (error) {
-            console.error('An error occurred:', error);
             setError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again later.');
         } finally {
             setIsLoading(false);
