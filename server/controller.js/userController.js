@@ -73,12 +73,15 @@ const loginUser = asyncHandler(async (req, res) => {
 
 // @desc Current user
 // @route GET /current
-// @access Private
+// @access private
 const currentUser = asyncHandler(async (req, res) => {
-  //   res.status(200).json({ user: req.user });
-  const { name, email } = req.user;
-  // res.status(200).json({ name, email });
-  res.json({ message: "Current user" });
+  const user = await User.findById(req.user.id).select('-password');
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
 });
 
 module.exports = { registerUser, loginUser, currentUser };

@@ -4,7 +4,7 @@ require("dotenv").config();
 
 // @desc POST a new blog
 // @route POST /api/blogs
-// @access Public
+// @access private
 const postBlog = asyncHandler(async (req, res) => {
   const { author, title, content } = req.body;
   if (!author || !title || !content) {
@@ -29,7 +29,7 @@ const postBlog = asyncHandler(async (req, res) => {
 
 // @desc GET all blogs
 // @route GET /api/blogs
-// @access Public
+// @access public
 const getBlogs = asyncHandler(async (req, res) => {
   const blogs = await Blog.find({});
 
@@ -43,7 +43,7 @@ const getBlogs = asyncHandler(async (req, res) => {
 
 // @desc GET individual blog
 // @route GET /api/blogs/:id
-// @access Public
+// @access public
 const getBlogById = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
 
@@ -56,7 +56,7 @@ const getBlogById = asyncHandler(async (req, res) => {
 
 // @desc PUT a blog
 // @route PUT /api/blogs/:id
-// @access Public
+// @access public
 const updateBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
 
@@ -72,7 +72,7 @@ const updateBlog = asyncHandler(async (req, res) => {
 
 // @desc DELETE a blog
 // @route DELETE /api/blogs/:id
-// @access Public
+// @access public
 const deleteBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
 
