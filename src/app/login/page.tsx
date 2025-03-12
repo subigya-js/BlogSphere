@@ -37,9 +37,8 @@ const page = () => {
 
             if (response.status === 200) {
                 setLoginData({ email: '', password: '' });
-                alert("Login successful");
                 // You might want to redirect to dashboard here
-                // window.location.href = '/dashboard';
+                window.location.href = '/feed';
             } else {
                 setError(data.message || 'Login failed. Please try again.');
             }
