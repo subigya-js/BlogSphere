@@ -9,6 +9,7 @@ connectDB();
 
 app.use(express.json());
 
+app.use("/api/blogs", require("./routes/blogRoutes"));
 app.use("/", require("./routes/authRoutes"));
 
 app.use(errorHandler);

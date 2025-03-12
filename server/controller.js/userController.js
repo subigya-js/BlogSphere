@@ -76,6 +76,8 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access Private
 const currentUser = asyncHandler(async (req, res) => {
   //   res.status(200).json({ user: req.user });
+  const { name, email } = req.user;
+  // res.status(200).json({ name, email });
   res.json({ message: "Current user" });
 });
 
