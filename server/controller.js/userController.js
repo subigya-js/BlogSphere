@@ -19,7 +19,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userAvailable) {
     res.status(400);
-    throw new Error("User already exists");
+    throw new Error("User already exists. Please try with other email");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
