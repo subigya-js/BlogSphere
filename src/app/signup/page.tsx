@@ -1,18 +1,25 @@
 "use client"
+import { useTheme } from "@/context/ThemeContext";
+import Link from "next/link";
 
-import React from 'react'
-import Link from 'next/link'
-import { useTheme } from '@/context/ThemeContext'
-
-const page = () => {
+export default function Home() {
     const { mode } = useTheme();
 
     return (
         <div className={`h-[90vh] ${mode === 'light' ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}>
             <main className="p-8 flex flex-col items-center justify-center h-full">
-                <h1 className="text-3xl font-bold mb-4">Login to BlogSphere</h1>
+                <h1 className="text-3xl font-bold mb-4">Welcome to BlogSphere</h1>
 
                 <form className={`flex flex-col gap-4 p-4 rounded-md lg:w-[30%] md:w-[40%] w-full ${mode === 'light' ? 'bg-gray-100 border border-gray-300' : 'bg-gray-800 border border-gray-700'}`}>
+                    <div className="flex flex-col gap-2">
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            placeholder="Your Name"
+                            className={`p-2 rounded-md outline-none ${mode === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600'} border`}
+                        />
+                    </div>
+
                     <div className="flex flex-col gap-2">
                         <label>Email:</label>
                         <input
@@ -38,12 +45,10 @@ const page = () => {
                         >
                             Submit
                         </button>
-                        <Link href="/signup" className="text-sm text-blue-500 hover:underline">Don't have an account?</Link>
+                        <Link href="/login" className="text-sm text-blue-500 hover:underline">Already have an account?</Link>
                     </div>
                 </form>
             </main>
         </div>
-    )
+    );
 }
-
-export default page
