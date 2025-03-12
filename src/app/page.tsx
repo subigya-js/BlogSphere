@@ -14,7 +14,7 @@ export default function Home() {
           Discover a world of ideas, stories, and insights. BlogSphere is your platform to read, write, and connect with passionate writers from around the globe.
         </p>
 
-        <Link href="/login" className={`px-6 py-2 rounded-full ${mode === 'light' ? 'bg-blue-500 text-white' : 'bg-blue-400 text-gray-900'} hover:opacity-90 transition-opacity`}>
+        <Link href="/login" className={`cursor-pointer  p-2 rounded-md ${mode === 'light' ? 'bg-green-500 hover:bg-green-600' : 'bg-green-700 hover:bg-green-800'} text-white px-6`}>
           Get Started
         </Link>
       </main>
