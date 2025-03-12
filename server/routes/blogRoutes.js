@@ -5,14 +5,19 @@ const {
   getBlogById,
   updateBlog,
   deleteBlog,
+  getUserBlogs,
 } = require("../controller.js/blogController");
+const validateToken = require("../middleware/validateTokenHandler");
 const router = express.Router();
 
-router.get("/", getBlogs).post("/", postBlog);
+router
+  .get("/", getBlogs)
+  .get("/users/:user_id", getUserBlogs)
+  .post("/", validateToken, postBlog);
 
 router
   .get("/:id", getBlogById)
-  .put("/:id", updateBlog)
-  .delete("/:id", deleteBlog);
+  .put("/:id", validateToken, updateBlog)
+  .delete("/:id", validateToken, deleteBlog);
 
 module.exports = router;

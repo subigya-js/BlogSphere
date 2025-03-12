@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const BlogSchema = new mongoose.Schema(
   {
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
     author: {
       type: {
         name: String,

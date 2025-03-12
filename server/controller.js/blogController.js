@@ -13,6 +13,7 @@ const postBlog = asyncHandler(async (req, res) => {
   }
 
   const newBlog = await Blog.create({
+    user_id: req.user.id, // Add this line to save the user_id
     author,
     title,
     content,
@@ -41,6 +42,22 @@ const getBlogs = asyncHandler(async (req, res) => {
   res.status(200).json({ blogs });
 });
 
+// @desc GET user's blogs
+// @route GET /api/blogs/users/:user_id
+// @access public
+const getUserBlogs = asyncHandler(async (req, res) => {
+  const user_id = req.params.user_id;
+
+  const blogs = await Blog.find({ user_id: user_id });
+
+  if (!blogs || blogs.length === 0) {
+    res.status(404);
+    throw new Error("No blogs found for this user");
+  }
+
+  res.status(200).json(blogs);
+});
+
 // @desc GET individual blog
 // @route GET /api/blogs/:id
 // @access public
@@ -56,7 +73,7 @@ const getBlogById = asyncHandler(async (req, res) => {
 
 // @desc PUT a blog
 // @route PUT /api/blogs/:id
-// @access public
+// @access private
 const updateBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
 
@@ -72,7 +89,7 @@ const updateBlog = asyncHandler(async (req, res) => {
 
 // @desc DELETE a blog
 // @route DELETE /api/blogs/:id
-// @access public
+// @access private
 const deleteBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
 
@@ -85,4 +102,11 @@ const deleteBlog = asyncHandler(async (req, res) => {
   res.status(200).json({ deletedBlog });
 });
 
-module.exports = { postBlog, getBlogs, getBlogById, updateBlog, deleteBlog };
+module.exports = {
+  postBlog,
+  getBlogs,
+  getUserBlogs,
+  getBlogById,
+  updateBlog,
+  deleteBlog,
+};
