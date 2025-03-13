@@ -36,8 +36,10 @@ const page = () => {
             const data = await response.json();
 
             if (response.status === 200) {
+                localStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('token', data.token);
+
                 setLoginData({ email: '', password: '' });
-                // You might want to redirect to dashboard here
                 window.location.href = '/feed';
             } else {
                 setError(data.message || 'Login failed. Please try again.');
