@@ -38,6 +38,7 @@ const page = () => {
             if (response.status === 200) {
                 localStorage.setItem('user', JSON.stringify(data));
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user_id', data._id);
 
                 setLoginData({ email: '', password: '' });
                 window.location.href = '/feed';
