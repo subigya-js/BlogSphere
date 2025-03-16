@@ -3,10 +3,11 @@ import AddBlog from "@/components/FeedComponents/AddBlog";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
 import { HiPencil } from "react-icons/hi2";
-import { toast } from "sonner";
 import { IoMdClose } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
+import { toast } from "sonner";
 
 interface BlogPost {
   _id: string;
@@ -25,6 +26,7 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+  const [toggleState, setToggleState] = useState<Record<string, boolean>>({});
 
   const handleBlogAdded = (newBlog: BlogPost) => {
     setUserBlogs(prevBlogs => [newBlog, ...prevBlogs]);
@@ -104,6 +106,13 @@ const Page = () => {
   const handleCancelEdit = () => {
     setEditingBlog(null);
   }
+
+  const handleToggle = (id: string) => {
+    setToggleState(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   const handleUpdateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -190,7 +199,7 @@ const Page = () => {
                     <div className={`bg-${mode === 'light' ? 'white' : 'gray-800'} p-6 rounded-lg w-[80%] max-w-4xl relative`}>
                       <button
                         onClick={handleCancelEdit}
-                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        className="absolute cursor-pointer top-5 right-5 text-gray-500 hover:text-gray-700"
                       >
                         <IoMdClose size={24} />
                       </button>
@@ -215,19 +224,12 @@ const Page = () => {
                               id="content"
                               name="content"
                               defaultValue={editingBlog.content}
-                              className={`outline-none w-full p-2 rounded border ${mode === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600'}`}
+                              className={`outline-none w-full p-2 rounded max-h-[300px] min-h-[50px] border ${mode === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600'}`}
                               rows={4}
                               required
                             ></textarea>
                           </div>
                           <div className="flex justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={handleCancelEdit}
-                              className={`cursor-pointer px-4 py-2 rounded ${mode === 'light' ? 'bg-gray-200 hover:bg-gray-300 duration-200 text-black' : 'bg-gray-700 hover:bg-gray-800 duration-200 text-white'}`}
-                            >
-                              Cancel
-                            </button>
                             <button
                               type="submit"
                               className={`cursor-pointer px-4 py-2 rounded ${mode === 'light' ? 'bg-gray-800 text-white' : 'bg-gray-900 text-white'}`}
@@ -240,26 +242,40 @@ const Page = () => {
                     </div>
                   </div>
                 ) : (
-                  <>
-                    <div>
+                  <div>
+                    <div className='flex justify-between items-center'>
                       <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
-                      <p className="text-sm mb-2">Author: {blog.author.name}</p>
-                      <p className="text-sm mb-4">Created: {new Date(blog.createdAt).toLocaleDateString()}</p>
-                      <p className="mb-4">{blog.content}</p>
+                      <div className="flex gap-4 items-center">
+                        <div className="flex justify-end space-x-2 mt-2">
+                          <button className="cursor-pointer" onClick={() => handleEditClick(blog)}>
+                            <HiPencil size={20} />
+                          </button>
+                          <button
+                            className="cursor-pointer"
+                            onClick={() => deleteBlog(blog._id)}
+                            disabled={isDeleting}
+                          >
+                            <MdDelete size={23} />
+                          </button>
+                        </div>
+
+                        <button
+                          className={`cursor-pointer transition-transform duration-300 ease-in-out ${mode === 'light' ? 'text-gray-600 hover:text-gray-800' : 'text-gray-400 hover:text-gray-200'}`}
+                          onClick={() => handleToggle(blog._id)}
+                        >
+                          {!toggleState[blog._id] ? <FaAngleDown /> : <FaAngleUp />}
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex justify-end space-x-2">
-                      <button className="cursor-pointer" onClick={() => handleEditClick(blog)}>
-                        <HiPencil size={20} />
-                      </button>
-                      <button
-                        className="cursor-pointer"
-                        onClick={() => deleteBlog(blog._id)}
-                        disabled={isDeleting}
-                      >
-                        <MdDelete size={23} />
-                      </button>
+                    <p className="text-sm mb-2">Author: {blog.author.name}</p>
+                    <p className="text-sm mb-4">Created: {new Date(blog.createdAt).toLocaleDateString()}</p>
+
+                    <div className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${toggleState[blog._id] ? 'max-h-[1000px]' : 'max-h-0'}`}>
+                      <p className={`mt-2 border-t ${mode === 'light' ? 'border-gray-300 pt-2' : 'border-gray-700 pt-2'}`}>{blog.content}</p>
                     </div>
-                  </>
+
+
+                  </div>
                 )}
               </div>
             ))}
