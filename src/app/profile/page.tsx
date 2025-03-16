@@ -4,7 +4,9 @@ import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
+import { HiPencil } from "react-icons/hi2";
 import { toast } from "sonner";
+import { IoMdClose } from "react-icons/io";
 
 interface BlogPost {
   _id: string;
@@ -22,6 +24,7 @@ const Page = () => {
   const [userBlogs, setUserBlogs] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
 
   const handleBlogAdded = (newBlog: BlogPost) => {
     setUserBlogs(prevBlogs => [newBlog, ...prevBlogs]);
@@ -59,6 +62,60 @@ const Page = () => {
     } finally {
       setIsDeleting(false);
     }
+  }
+
+  const updateBlog = async (blogId: string, updatedData: Partial<BlogPost>) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('User not authenticated');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/blogs/${blogId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedData)
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedBlog = await response.json();
+      setUserBlogs(prevBlogs => prevBlogs.map(blog =>
+        blog._id === blogId ? { ...blog, ...updatedBlog } : blog
+      ));
+      setEditingBlog(null);
+      toast.success('Blog updated successfully');
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      toast.error('Failed to update blog. Please try again.');
+    }
+  }
+
+  const handleEditClick = (blog: BlogPost) => {
+    setEditingBlog(blog);
+  }
+
+  const handleCancelEdit = () => {
+    setEditingBlog(null);
+  }
+
+  const handleUpdateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingBlog) return;
+
+    const formData = new FormData(e.currentTarget);
+    const updatedData = {
+      title: formData.get('title') as string,
+      content: formData.get('content') as string,
+    };
+
+    updateBlog(editingBlog._id, updatedData);
   }
 
   useEffect(() => {
@@ -127,23 +184,83 @@ const Page = () => {
         ) : userBlogs.length > 0 ? (
           <div className="space-y-6">
             {userBlogs.map((blog) => (
-              <div key={blog._id} className={`p-4 rounded-lg ${mode === 'light' ? 'bg-gray-100' : 'bg-gray-800'} flex justify-between`}>
-                <div className="">
-                  <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
-                  <p className="text-sm mb-2">Author: {blog.author.name}</p>
-                  <p className="text-sm mb-4">Created: {new Date(blog.createdAt).toLocaleDateString()}</p>
-                  <p className="mb-4">{blog.content}</p>
-                </div>
+              <div key={blog._id} className={`p-4 rounded-lg ${mode === 'light' ? 'bg-gray-100' : 'bg-gray-800'}`}>
+                {editingBlog && editingBlog._id === blog._id ? (
+                  <div className="fixed inset-0 bg-gray-500/80 flex justify-center items-center pt-4 z-50">
+                    <div className={`bg-${mode === 'light' ? 'white' : 'gray-800'} p-6 rounded-lg w-[80%] max-w-4xl relative`}>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                      >
+                        <IoMdClose size={24} />
+                      </button>
+                      <h2 className="text-2xl font-bold mb-4">Edit Blog Post</h2>
 
-                <div className="mr-5">
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => deleteBlog(blog._id)}
-                    disabled={isDeleting}
-                  >
-                    <MdDelete size={23} />
-                  </button>
-                </div>
+                      <div className={`bg-${mode === 'light' ? 'white' : 'gray-800'} p-6 rounded-lg max-w-[100%]`}>
+                        <form onSubmit={handleUpdateSubmit} >
+                          <div className="mb-4">
+                            <label htmlFor="title" className="block text-sm font-medium mb-1">Blog Title</label>
+                            <input
+                              type="text"
+                              id="title"
+                              name="title"
+                              defaultValue={editingBlog.title}
+                              className={`outline-none w-full p-2 rounded border ${mode === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600'}`}
+                              required
+                            />
+                          </div>
+                          <div className="mb-4">
+                            <label htmlFor="content" className="block text-sm font-medium mb-1">Blog Content</label>
+                            <textarea
+                              id="content"
+                              name="content"
+                              defaultValue={editingBlog.content}
+                              className={`outline-none w-full p-2 rounded border ${mode === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600'}`}
+                              rows={4}
+                              required
+                            ></textarea>
+                          </div>
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={handleCancelEdit}
+                              className={`cursor-pointer px-4 py-2 rounded ${mode === 'light' ? 'bg-gray-200 hover:bg-gray-300 duration-200 text-black' : 'bg-gray-700 hover:bg-gray-800 duration-200 text-white'}`}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="submit"
+                              className={`cursor-pointer px-4 py-2 rounded ${mode === 'light' ? 'bg-gray-800 text-white' : 'bg-gray-900 text-white'}`}
+                            >
+                              Update Blog Post
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
+                      <p className="text-sm mb-2">Author: {blog.author.name}</p>
+                      <p className="text-sm mb-4">Created: {new Date(blog.createdAt).toLocaleDateString()}</p>
+                      <p className="mb-4">{blog.content}</p>
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <button className="cursor-pointer" onClick={() => handleEditClick(blog)}>
+                        <HiPencil size={20} />
+                      </button>
+                      <button
+                        className="cursor-pointer"
+                        onClick={() => deleteBlog(blog._id)}
+                        disabled={isDeleting}
+                      >
+                        <MdDelete size={23} />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
