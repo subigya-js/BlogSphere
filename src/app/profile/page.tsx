@@ -8,6 +8,7 @@ import { IoMdClose } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface BlogPost {
   _id: string;
@@ -21,12 +22,20 @@ interface BlogPost {
 
 const Page = () => {
   const { mode } = useTheme();
+  const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [userBlogs, setUserBlogs] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
   const [toggleState, setToggleState] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+  }, [router]);
 
   const handleBlogAdded = (newBlog: BlogPost) => {
     setUserBlogs(prevBlogs => [newBlog, ...prevBlogs]);
@@ -128,16 +137,23 @@ const Page = () => {
   }
 
   useEffect(() => {
-    try {
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        const parsedUserData = JSON.parse(userData);
-        setUserId(parsedUserData._id);
+    const fetchUserData = () => {
+      try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          const parsedUserData = JSON.parse(userData);
+          setUserId(parsedUserData._id);
+        } else {
+          router.push('/login');
+        }
+      } catch (error) {
+        console.error("Error retrieving user data from localStorage:", error);
+        router.push('/login');
       }
-    } catch (error) {
-      console.error("Error retrieving user data from localStorage:", error);
-    }
-  }, []);
+    };
+
+    fetchUserData();
+  }, [router]);
 
   useEffect(() => {
     const fetchUserBlogs = async () => {
