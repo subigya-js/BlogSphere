@@ -113,10 +113,14 @@ const Page = () => {
         <div className="flex justify-between items-center w-full mb-6">
           <h1 className="text-3xl font-bold">Your Blogs</h1>
 
-          <Link href="/feed" className={`px-4 py-2 rounded-md cursor-pointer transition-colors duration-200 ${mode === 'light'
-            ? 'bg-gray-800 text-white hover:bg-gray-700'
-            : 'bg-gray-200 text-black hover:bg-gray-300'
-            }`}>Visit Feed</Link>
+          <div className="flex gap-3">
+            <AddBlog onBlogAdded={handleBlogAdded} />
+
+            <Link href="/feed" className={`px-4 py-2 rounded-md cursor-pointer transition-colors duration-200 ${mode === 'light'
+              ? 'bg-gray-800 text-white hover:bg-gray-700'
+              : 'bg-gray-200 text-black hover:bg-gray-300'
+              }`}>Visit Feed</Link>
+          </div>
         </div>
         {isLoading ? (
           <p>Loading your blogs...</p>
