@@ -1,9 +1,19 @@
 "use client"
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { mode } = useTheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      router.push('/feed');
+    }
+  }, [router]);
 
   return (
     <div className={`h-[90vh] ${mode === 'light' ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}>
