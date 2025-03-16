@@ -2,8 +2,13 @@
 
 import { useTheme } from '@/context/ThemeContext';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
-const AddBlog = () => {
+interface AddBlogProps {
+    onBlogAdded: (newBlog: any) => void;
+}
+
+const AddBlog: React.FC<AddBlogProps> = ({ onBlogAdded }) => {
     const { mode } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [title, setTitle] = useState('');
@@ -33,10 +38,13 @@ const AddBlog = () => {
         const blogData = {
             author: {
                 name: authorName,
-                email: authorEmail
+                email: authorEmail,
+                _id: '' // This will be set by the server
             },
             title,
-            content
+            content,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
         };
 
         try {
@@ -55,6 +63,8 @@ const AddBlog = () => {
 
             const result = await response.json();
             console.log('Blog post created:', result);
+            onBlogAdded(result.newBlog);
+            toast.success('Blog post created successfully!');
         }
         catch (error) {
             console.error('Error creating blog post:', error);

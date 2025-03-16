@@ -19,32 +19,13 @@ interface Blog {
     updatedAt: string;
 }
 
-const NewsFeed = () => {
+interface NewsFeedProps {
+    blogs: Blog[];
+}
+
+const NewsFeed: React.FC<NewsFeedProps> = ({ blogs }) => {
     const { mode } = useTheme();
     const [toggleState, setToggleState] = useState<Record<string, boolean>>({});
-    const [error, setError] = useState<string | null>(null);
-    const [blogData, setBlogData] = useState<Blog[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchBlogData = async () => {
-            try {
-                const response = await fetch('http://localhost:3001/api/blogs/');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch blog data');
-                }
-                const data = await response.json();
-                setBlogData(data.blogs);
-            } catch (error) {
-                console.error("Error fetching blog data:", error);
-                setError(error instanceof Error ? error.message : 'An unknown error occurred');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchBlogData();
-    }, [blogData]);
 
     const handleToggle = (id: string) => {
         setToggleState(prev => ({
@@ -53,11 +34,10 @@ const NewsFeed = () => {
         }));
     };
 
-    if (isLoading) return <div className="text-center p-4">Loading...</div>;
-    if (error) return <div className="text-center p-4 text-red-500">Error: {error}</div>;
+    if (blogs.length === 0) return <div className="text-center p-4">No blogs available.</div>;
     return (
         <div className='bg-amber-00 min-h-[80vh] py-4'>
-            {blogData.map((blog) => (
+            {blogs.map((blog) => (
                 <div key={blog._id} className={`min-h-[100px] border ${mode === 'light' ? 'border-gray-300 bg-gray-100' : 'border-gray-700 bg-gray-800'} rounded-md py-3 px-6 justify-between items-center max-w-[70%] mx-auto mb-4 transition-colors duration-300`}>
                     <div className='flex flex-col gap-1 pb-3'>
                         <div className='flex justify-between items-center'>
